@@ -1,0 +1,37 @@
+{
+  "compilerOptions": {
+    "allowUnusedLabels": true,
+    "baseUrl": "src",
+    "downlevelIteration": true,
+    "declaration": true,
+    "emitDecoratorMetadata": false,
+    "esModuleInterop": true,
+    "experimentalDecorators": false,
+    "importHelpers": false,
+    "lib": ["dom", "es2023"],
+    "module": "esnext",
+    "moduleResolution": "node",
+    "noEmitHelpers": false,
+    "noImplicitAny": false,
+    "noUnusedLocals": false,
+    "outDir": "dist",
+    "paths": {
+      "~/*": [
+        "*"
+      ]
+    },
+    "removeComments": false,
+    "resolveJsonModule": true,
+    "rootDir": "src",
+    "skipLibCheck": true,
+    "sourceMap": false,
+    "strict": true,
+    "stripInternal": true,
+    "target": "es2020",
+    "typeRoots": [],
+    "types": []
+  },
+  "include": [
+    "src"
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "extends": "./../tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": "./",
+    "paths": {
+      "decorio": [
+        "./../src/index.ts"
+      ]
+    },
+    "typeRoots": [
+      "./../node_modules/@types",
+      "./../node_modules/vitest/globals.d.ts",
+      "./../node_modules/vitest/jsdom.d.ts"
+    ],
+    "types": [
+      "node",
+      "vitest",
+      "vitest/globals",
+      "vitest/jsdom"
+    ]
+  },
+  "include": [
+    "./global.d.ts",
+    "./**/*.tsx",
+    "./**/*.ts",
+    "./../src/**/*.tsx"
+  ]
+}
