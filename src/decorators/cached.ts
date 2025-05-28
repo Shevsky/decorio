@@ -33,7 +33,18 @@ cached.invalidate = (target: Function): void => {
  *
  * Usage:
  * ```typescript
+ * class Example {
+ *   @cached sum(a: number, b: number): number {
+ *     return a + b;
+ *   }
+ * }
  *
+ * const e = new Example();
+ * e.sum(1, 2); // computes 3
+ * e.sum(1, 2); // returns 3 from cache
+ *
+ * // flush the cache for this method
+ * cached.invalidate(e.sum);
  * ```
  */
 export function cached<A extends Array<unknown>, R>(
