@@ -31,6 +31,9 @@
     "typeRoots": [],
     "types": []
   },
+  "tsc-alias": {
+    "resolveFullPaths": true
+  },
   "include": [
     "src"
   ]
