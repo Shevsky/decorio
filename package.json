@@ -1,6 +1,6 @@
 {
   "name": "decorio",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "First-class ECMAScript decorators for caching, binding, and concurrency patterns",
   "keywords": [
     "decorators",
@@ -53,7 +53,10 @@
       [
         "@semantic-release/git",
         {
-          "assets": ["package.json", "CHANGELOG.md"],
+          "assets": [
+            "package.json",
+            "CHANGELOG.md"
+          ],
           "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
         }
       ],
