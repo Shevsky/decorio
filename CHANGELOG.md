@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/Shevsky/decorio/compare/v1.0.3...v1.1.0) (2025-06-01)
+
+
+### Features
+
+* [@timeout](https://github.com/timeout) decorator ([d9c4408](https://github.com/Shevsky/decorio/commit/d9c440874086eb6f4c378e7a473c3a9e039a79e2))
+
 ## [1.0.3](https://github.com/Shevsky/decorio/compare/v1.0.2...v1.0.3) (2025-05-28)
 
 
