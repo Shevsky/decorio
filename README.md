@@ -53,28 +53,6 @@ e.sum(1, 2); // returns 3 from cache
 cached.invalidate(e.sum);
 ```
 
-## 🔗 Binding decorators
-
-### `@bound`
-
-Ensure a method always calls with the right `this`. Even if you extract the function reference, it stays bound to its instance.
-
-```typescript
-import { bound } from 'decorio';
-
-class Example {
-  message = 'Hello';
-
-  @bound greet() {
-    console.log(this.message);
-  }
-}
-
-const e = new Example();
-const greet = e.greet;
-greet(); // always logs 'Hello'
-```
-
 ## ⚙️ Concurrency decorators
 
 ### `@singleflight`
@@ -163,6 +141,54 @@ class Example {
 const e = new Example();
 e.reload();
 e.reload(); // returns the same Promise, no extra request
+```
+
+## 🔗 Utility decorators
+
+### `@bound`
+
+Ensure a method always calls with the right `this`. Even if you extract the function reference, it stays bound to its instance.
+
+```typescript
+import { bound } from 'decorio';
+
+class Example {
+  message = 'Hello';
+
+  @bound greet() {
+    console.log(this.message);
+  }
+}
+
+const e = new Example();
+const greet = e.greet;
+greet(); // always logs 'Hello'
+```
+
+### `@timeout(timeoutMs)`
+
+Enforce a maximum execution time on an async method. If the method does not complete within `timeoutMs` milliseconds, it will be aborted via an `AbortSignal`.
+
+Decorator exposes a static property `timeout.signal` that the method can read at runtime.
+
+```typescript
+import { timeout } from 'decorio';
+
+class Example {
+  @timeout(500) async fetchData(id: string): Promise<Data> {
+    const { signal } = timeout;
+
+    return fetch(`/api/data/${id}`, { signal }).then((r) => r.json());
+  }
+}
+
+const e = new Example();
+try {
+  const data = await e.fetchData("123");
+  console.log('Got data:', data);
+} catch (e) {
+  console.error(e.message); // If over 500 ms: "timeout 500ms exceeded"
+}
 ```
 
 ## 🧶 Getting started with Stage 3 Decorators

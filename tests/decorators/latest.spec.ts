@@ -1,6 +1,6 @@
 import { latest, wait } from 'decorio';
 
-describe('latest', () => {
+describe('@latest', () => {
   beforeAll(() => {
     vi.useFakeTimers();
   });

@@ -1,6 +1,6 @@
 import { cached } from 'decorio';
 
-describe('cached', () => {
+describe('@cached', () => {
   class Example {
     readonly syncSpy = vi.fn();
     readonly asyncSpy = vi.fn();

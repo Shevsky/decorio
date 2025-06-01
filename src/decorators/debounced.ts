@@ -8,7 +8,7 @@ type State = {
   controller: AbortController | null;
 };
 
-type Debounced = {
+type DebouncedDecorator = {
   <A extends Array<unknown>, R extends Promise<unknown> | void>(
     value: unknown,
     context: ClassMethodDecoratorContext<object, (...args: A) => R>
@@ -64,7 +64,7 @@ debounced.signal = undefined as AbortSignal | undefined;
  *
  * @param delayMs how long to wait (ms) after the last call before executing
  */
-export function debounced(delayMs: number): Debounced {
+export function debounced(delayMs: number): DebouncedDecorator {
   return <A extends Array<unknown>, R extends Promise<unknown> | void>(
     value: unknown,
     context: ClassMethodDecoratorContext<object, (...args: A) => R> | ClassFieldDecoratorContext<object, (...args: A) => R>

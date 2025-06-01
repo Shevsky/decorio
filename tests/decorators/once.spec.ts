@@ -1,6 +1,6 @@
 import { once } from 'decorio';
 
-describe('once', () => {
+describe('@once', () => {
   class Example {
     readonly syncSpy = vi.fn();
     readonly asyncSpy = vi.fn();

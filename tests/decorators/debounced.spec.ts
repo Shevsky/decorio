@@ -1,6 +1,6 @@
 import { wait, debounced } from 'decorio';
 
-describe('debounced', () => {
+describe('@debounced', () => {
   beforeAll(() => {
     vi.useFakeTimers();
   });

@@ -1,6 +1,6 @@
 import { wait, singleflight } from 'decorio';
 
-describe('singleflight', () => {
+describe('@singleflight', () => {
   beforeAll(() => {
     vi.useFakeTimers();
   });

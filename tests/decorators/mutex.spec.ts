@@ -1,6 +1,6 @@
 import { mutex, wait } from 'decorio';
 
-describe('mutex', () => {
+describe('@mutex', () => {
   beforeAll(() => {
     vi.useFakeTimers();
   });
