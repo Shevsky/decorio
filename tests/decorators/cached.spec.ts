@@ -1,6 +1,16 @@
-import { cached } from 'decorio';
+import { cached, wait } from 'decorio';
 
 describe('@cached', () => {
+  beforeAll(() => {
+    vi.useFakeTimers();
+  });
+
+  afterAll(() => {
+    vi.clearAllTimers();
+    vi.clearAllMocks();
+    vi.useRealTimers();
+  });
+
   class Example {
     readonly syncSpy = vi.fn();
     readonly asyncSpy = vi.fn();
@@ -73,13 +83,90 @@ describe('@cached', () => {
     const p1 = e.asyncMethod(5);
     expect(e.asyncSpy).toHaveBeenCalledTimes(1);
 
+    const w1 = wait(5000);
+    await vi.advanceTimersByTimeAsync(5000);
+    await w1;
+
     const p2 = e.asyncMethod(5);
     // same promise returned
     expect(e.asyncSpy).toHaveBeenCalledTimes(1);
     expect(p2).toBe(p1);
 
+    const w2 = wait(5000);
+    await vi.advanceTimersByTimeAsync(5000);
+    await w2;
+
+    const p3 = e.asyncMethod(5);
+    // same promise returned
+    expect(e.asyncSpy).toHaveBeenCalledTimes(1);
+    expect(p3).toBe(p1);
+
     await expect(p1).resolves.toBe(50);
     await expect(p2).resolves.toBe(50);
+    await expect(p3).resolves.toBe(50);
+  });
+
+  test('should clear cache based on ttl', async () => {
+    class HeavyExample extends Example {
+      readonly syncSpy = vi.fn();
+      readonly asyncSpy = vi.fn();
+
+      @cached(5000) heavySyncMethod(a: number): Array<object> {
+        this.syncSpy(a);
+
+        let i = 0;
+
+        return Array.from({ length: 5000 }, () => ({ a: a + i++ }));
+      }
+
+      @cached(5000) async heavyAsyncMethod(a: number): Promise<Array<object>> {
+        this.asyncSpy(a);
+
+        await wait(1000);
+
+        let i = 0;
+
+        return Array.from({ length: 5000 }, () => ({ a: a + i++ }));
+      }
+    }
+
+    const e = new HeavyExample();
+
+    const p1 = e.heavyAsyncMethod(1);
+    expect(e.asyncSpy).toHaveBeenCalledTimes(1);
+
+    await vi.advanceTimersByTimeAsync(1000);
+    await expect(p1).resolves.toBeInstanceOf(Array);
+
+    const r1 = await p1;
+    expect(r1.length).toBe(5000);
+    const wr1 = new WeakRef(r1);
+
+    await vi.advanceTimersByTimeAsync(2000);
+
+    // same promise returned
+    const p2 = e.heavyAsyncMethod(1);
+    expect(p2).toBe(p1);
+
+    await vi.advanceTimersByTimeAsync(1000);
+
+    // same promise returned
+    const p3 = e.heavyAsyncMethod(1);
+    expect(p3).toBe(p1);
+
+    await vi.advanceTimersByTimeAsync(1000);
+
+    // new promise
+    const p4 = e.heavyAsyncMethod(1);
+    expect(p4).not.toBe(p1);
+
+    const w1 = wait(5000);
+    await vi.advanceTimersByTimeAsync(5000);
+    await w1;
+
+    // yet new promise
+    const p5 = e.heavyAsyncMethod(1);
+    expect(p5).not.toBe(p4);
   });
 
   test('should cache per-instance separately', () => {

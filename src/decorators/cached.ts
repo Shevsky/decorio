@@ -47,6 +47,13 @@ cached.invalidate = (target: Function): void => {
  * cached.invalidate(e.sum);
  * ```
  */
+export function cached(ttl: number): {
+  <A extends Array<unknown>, R>(value: unknown, context: ClassMethodDecoratorContext<object, (...args: A) => R>): (...args: A) => R;
+  <A extends Array<unknown>, R>(
+    value: unknown,
+    context: ClassFieldDecoratorContext<object, (...args: A) => R>
+  ): (originalFn: (...args: A) => R) => (...args: A) => R;
+};
 export function cached<A extends Array<unknown>, R>(
   value: unknown,
   context: ClassMethodDecoratorContext<object, (...args: A) => R>
@@ -55,10 +62,9 @@ export function cached<A extends Array<unknown>, R>(
   value: unknown,
   context: ClassFieldDecoratorContext<object, (...args: A) => R>
 ): (originalFn: (...args: A) => R) => (...args: A) => R;
-export function cached<A extends Array<unknown>, R>(
-  value: unknown,
-  context: ClassMethodDecoratorContext<object, (...args: A) => R> | ClassFieldDecoratorContext<object, (...args: A) => R>
-): unknown {
+export function cached<A extends Array<unknown>, R>(arg1: unknown, arg2?: unknown): unknown {
+  let ttl = Infinity;
+
   const apply = (originalFn: (...args: A) => R): ((...args: A) => R) => {
     const storage = new Map<object, State>();
 
@@ -90,6 +96,13 @@ export function cached<A extends Array<unknown>, R>(
         void result.catch(() => state.calls.delete(args));
       }
 
+      // 🧼 Clear cache
+      if (ttl > 0 && ttl !== Infinity) {
+        setTimeout(() => {
+          state.calls.delete(args);
+        }, ttl);
+      }
+
       return result;
     };
 
@@ -100,5 +113,19 @@ export function cached<A extends Array<unknown>, R>(
     return patchedFn;
   };
 
-  return decorate(value, context, apply);
+  if (arg2 && typeof arg2 === 'object') {
+    const value = arg1;
+    const context = arg2 as ClassMethodDecoratorContext<object, (...args: A) => R> | ClassFieldDecoratorContext<object, (...args: A) => R>;
+
+    return decorate(value, context, apply);
+  } else {
+    ttl = Number(arg1);
+
+    return (
+      value: unknown,
+      context: ClassMethodDecoratorContext<object, (...args: A) => R> | ClassFieldDecoratorContext<object, (...args: A) => R>
+    ) => {
+      return decorate(value, context, apply);
+    };
+  }
 }
