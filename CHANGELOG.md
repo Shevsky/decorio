@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/Shevsky/decorio/compare/v1.1.0...v1.2.0) (2025-06-06)
+
+
+### Features
+
+* ttl for [@cached](https://github.com/cached) decorator ([4efade1](https://github.com/Shevsky/decorio/commit/4efade146e2a0878ddd90fa21c3565f9880247be))
+
 # [1.1.0](https://github.com/Shevsky/decorio/compare/v1.0.3...v1.1.0) (2025-06-01)
 
 
