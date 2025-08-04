@@ -59,10 +59,9 @@ export function singleflight<A extends Array<unknown>, R extends Promise<unknown
       // 📦 Cache this Promise under the argument list
       state.calls.set(args, result);
 
-      // 🧹 Once the Promise settles, remove it from cache
-      void result.finally(() => state.calls.delete(args));
-
-      return result;
+      return result.finally(() => {
+        state.calls.delete(args);
+      }) as R;
     };
   };
 

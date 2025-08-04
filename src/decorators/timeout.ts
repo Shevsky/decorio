@@ -77,11 +77,9 @@ export function timeout(timeoutMs: number): TimeoutDecorator {
           timeout.signal = undefined;
         }
 
-        void result.finally(() => {
+        return result.finally(() => {
           clearTimeout(id);
         });
-
-        return result;
       } as (...args: A) => R;
     };
 

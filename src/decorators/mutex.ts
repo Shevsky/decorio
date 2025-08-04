@@ -64,12 +64,9 @@ export function mutex<A extends Array<unknown>, R extends Promise<unknown>>(
       // 📦 Cache this Promise
       state.call = result;
 
-      // 🧹 Once the Promise settles, remove it from cache
-      void result.finally(() => {
+      return result.finally(() => {
         state.call = null;
-      });
-
-      return result;
+      }) as R;
     };
   };
 
