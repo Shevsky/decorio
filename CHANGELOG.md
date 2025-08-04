@@ -1,3 +1,11 @@
+## [1.2.1](https://github.com/Shevsky/decorio/compare/v1.2.0...v1.2.1) (2025-08-04)
+
+
+### Bug Fixes
+
+* promise finally fix ([b7d71cb](https://github.com/Shevsky/decorio/commit/b7d71cbffc5c2cc4fb04398b47524d73c670c6e2))
+* promise finally fix ([db8bc69](https://github.com/Shevsky/decorio/commit/db8bc69bf072aeb5dddb9c06102439815135a144))
+
 # [1.2.0](https://github.com/Shevsky/decorio/compare/v1.1.0...v1.2.0) (2025-06-06)
 
 
