@@ -54,14 +54,14 @@ export function singleflight<A extends Array<unknown>, R extends Promise<unknown
       }
 
       // 🚀 No existing call found: invoke the original function
-      const result = originalFn.apply(this, args);
+      const result = originalFn.apply(this, args).finally(() => {
+        state.calls.delete(args);
+      }) as R;
 
       // 📦 Cache this Promise under the argument list
       state.calls.set(args, result);
 
-      return result.finally(() => {
-        state.calls.delete(args);
-      }) as R;
+      return result;
     };
   };
 

@@ -59,14 +59,14 @@ export function mutex<A extends Array<unknown>, R extends Promise<unknown>>(
       }
 
       // 🚀 No existing call found: invoke the original function
-      const result = originalFn.apply(this, args);
+      const result = originalFn.apply(this, args).finally(() => {
+        state.call = null;
+      }) as R;
 
       // 📦 Cache this Promise
       state.call = result;
 
-      return result.finally(() => {
-        state.call = null;
-      }) as R;
+      return result;
     };
   };
 
