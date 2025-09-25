@@ -1,3 +1,10 @@
+# [1.3.0](https://github.com/Shevsky/decorio/compare/v1.2.1...v1.3.0) (2025-09-25)
+
+
+### Features
+
+* [@lazy](https://github.com/lazy) decorator ([010a9c1](https://github.com/Shevsky/decorio/commit/010a9c199054b2b9433a583e52a78d100328d442))
+
 ## [1.2.1](https://github.com/Shevsky/decorio/compare/v1.2.0...v1.2.1) (2025-08-04)
 
 
