@@ -62,6 +62,25 @@ await wait(30 * 1000); // wait 30 sec
 const p3 = e.fetchData('foo'); // new promise returned
 ```
 
+### `@lazy`
+
+Evaluates the original getter once per instance on the first access and then keeps returning the same value on subsequent reads, without re-running the getter.
+
+```typescript
+class User {
+  #seed = Math.random();
+
+  @lazy get checksum(): string {
+    // expensive work...
+    return hash(this.#seed);
+  }
+}
+
+const u = new User();
+u.checksum; // computed once
+u.checksum; // served from cache
+```
+
 ## ⚙️ Concurrency decorators
 
 ### `@singleflight`
