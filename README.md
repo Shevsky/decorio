@@ -157,18 +157,20 @@ e.fetchData('2'); // aborts '1' and starts '2' immediately
 
 ### `@mutex`
 
-Enforce **one** active invocation at a time, ignoring all arguments. While it’s running, every call returns that same `Promise`. Once it finishes, the next call can go through. If you need argument-based deduplication instead, use `@singleflight`.
+Ensures that an async method never runs concurrently. If the method is called again while a previous call is still running, the new call will wait in a queue until all earlier calls have finished.
 
 ```typescript
 import { mutex } from 'decorio';
 
 class Example {
-  @mutex async reload(): Promise<void> { ... }
+  @mutex async save(data: string): Promise<void> { ... }
 }
 
 const e = new Example();
-e.reload();
-e.reload(); // returns the same Promise, no extra request
+e.save('A'); // runs immediately
+e.save('B'); // waits until A finishes
+e.save('C'); // waits until B finishes
+// start A → end A → start B → end B → start C → end C
 ```
 
 ## 🔗 Utility decorators

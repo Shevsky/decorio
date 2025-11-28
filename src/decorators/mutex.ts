@@ -1,32 +1,34 @@
-import { decorate, emplace } from '~/internal';
+import { decorate, emplace, resolvers } from '~/internal';
 
 /** @internal */
 type State = {
-  call: Promise<unknown> | null;
+  pending: number;
+  tail: Promise<void> | null;
 };
 
 /**
- * 🎯 Decorator `@mutex` ensures that at most one invocation of an async
- * method is in flight at any time. While the decorated method is still
- * running, all subsequent calls - regardless of their arguments - will
- * return the same Promise as the first call, until it settles.
+ * 🎯 Decorator `@mutex` ensures that an async method never runs concurrently.
  *
- * ⚠️ Arguments are ignored when determining whether to reuse the in-flight
- * call: every new invocation during the active period will simply
- * reuse that single Promise.
+ * Every invocation of the decorated method is executed strictly one at a time.
+ * If the method is called again while a previous call is still running,
+ * the new call will wait in a queue until all earlier calls have finished.
  *
- * If you need to dedupe calls by their arguments, consider using
- * `@singleflight` instead.
+ * Unlike `@singleflight`, this decorator:
+ * - Does NOT return the same Promise for concurrent calls;
+ * - Runs every invocation independently with its own arguments and result;
+ * - Guarantees that each call will eventually execute - queued behind previously scheduled ones.
  *
  * Usage:
  * ```typescript
  * class Example {
- *   @mutex async reload(): Promise<void> { ... }
+ *   @mutex async save(data: string): Promise<void> { ... }
  * }
  *
  * const e = new Example();
- * e.reload(); // fires immediately
- * e.reload(); // returns same Promise, does not re-fetch
+ * e.save('A'); // runs immediately
+ * e.save('B'); // waits until A finishes
+ * e.save('C'); // waits until B finishes
+ * // start A → end A → start B → end B → start C → end C
  * ```
  */
 export function mutex<A extends Array<unknown>, R extends Promise<unknown>>(
@@ -50,23 +52,33 @@ export function mutex<A extends Array<unknown>, R extends Promise<unknown>>(
         storage,
         this,
         (): State => ({
-          call: null
+          pending: 0,
+          tail: null
         })
       );
 
-      if (state.call) {
-        return state.call as R;
-      }
+      ++state.pending;
 
-      // 🚀 No existing call found: invoke the original function
-      const result = originalFn.apply(this, args).finally(() => {
-        state.call = null;
-      }) as R;
+      const { promise, resolve, reject } = resolvers<Awaited<R>>();
 
-      // 📦 Cache this Promise
-      state.call = result;
+      const finalize = () => {
+        if (!--state.pending) {
+          state.tail = null;
+        }
+      };
 
-      return result;
+      const execute = () => {
+        try {
+          return originalFn.apply(this, args).then(resolve).catch(reject).finally(finalize);
+        } catch (error) {
+          finalize();
+          reject(error);
+        }
+      };
+
+      state.tail = state.tail ? state.tail.then(execute) : execute();
+
+      return promise;
     };
   };
 
