@@ -59,7 +59,7 @@ export function mutex<A extends Array<unknown>, R extends Promise<unknown>>(
 
       ++state.pending;
 
-      const { promise, resolve, reject } = resolvers<Awaited<R>>();
+      const { promise, resolve, reject } = resolvers();
 
       const finalize = () => {
         if (!--state.pending) {
@@ -71,14 +71,17 @@ export function mutex<A extends Array<unknown>, R extends Promise<unknown>>(
         try {
           return originalFn.apply(this, args).then(resolve).catch(reject).finally(finalize);
         } catch (error) {
-          finalize();
-          reject(error);
+          // handle sync errors
+
+          return Promise.resolve()
+            .then(() => reject(error))
+            .then(finalize);
         }
       };
 
       state.tail = state.tail ? state.tail.then(execute) : execute();
 
-      return promise;
+      return promise as R;
     };
   };
 
