@@ -1,3 +1,11 @@
+## [1.3.1](https://github.com/Shevsky/decorio/compare/v1.3.0...v1.3.1) (2025-11-28)
+
+
+### Bug Fixes
+
+* mutex logic ([6b09489](https://github.com/Shevsky/decorio/commit/6b09489977fa6c0a8f584f832ae7a2219b941774))
+* sync errors for [@mutex](https://github.com/mutex) ([c6956d0](https://github.com/Shevsky/decorio/commit/c6956d0964f580d85b40e5f064e8636c376fb5de))
+
 # [1.3.0](https://github.com/Shevsky/decorio/compare/v1.2.1...v1.3.0) (2025-09-25)
 
 
